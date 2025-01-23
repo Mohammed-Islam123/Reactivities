@@ -12,6 +12,16 @@ builder.Services.AddDbContext<ReactivitiesDbContex>((options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 }));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5173/")
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,7 +31,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-
+app.UseCors("AllowAllOrigins");
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();
@@ -30,11 +40,13 @@ try
 {
     var context = service.GetRequiredService<ReactivitiesDbContex>();
     await context.Database.MigrateAsync();
+    if(!context.Activities.Any()) 
     await Seed.SeedData(context);
 
 }
 catch (Exception e)
 {
+
     var logger = service.GetRequiredService<ILogger<Program>>();
     logger.LogError(e, "A problem occured when Migrating database");
 }

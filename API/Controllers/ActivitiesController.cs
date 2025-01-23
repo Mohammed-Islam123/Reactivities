@@ -24,7 +24,7 @@ public class ActivitiesController: BaseController
     [HttpGet("{id}")]
     public async Task<ActionResult<Activity>> GetActivity(Guid id)
     {
-        var result =  await _context.Activities.FindAsync(id);
-        return result is null ? NotFound() : Ok(result); 
+        var result =  await _context.Activities.FindAsync( id);
+        return result is null ? NotFound() : Ok(result);   
     }
 }

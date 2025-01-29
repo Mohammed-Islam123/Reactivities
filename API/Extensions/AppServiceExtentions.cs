@@ -15,16 +15,7 @@ collection.AddDbContext<ReactivitiesDbContex>((options =>
         {
             options.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
         }));
-collection.AddCors(options =>
-        {
-            options.AddPolicy("AllowAllOrigins",
-                b =>
-                {
-                    b.WithOrigins("http://localhost:5173/")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
-                });
-        });
+
 collection.AddAutoMapper(typeof(MappingProfiles).Assembly);
 collection.AddMediatR(conf => conf.RegisterServicesFromAssemblies(typeof(List.QueryHandler).Assembly));
 return collection;

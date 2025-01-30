@@ -52,6 +52,7 @@ const ActivitiesDashboard = ({
         ) : (
           openActivityForm && (
             <ActivityForm
+              activities={activities}
               editedActivity={editedActivity}
               setEditedActivity={setEditedActivity}
               setOpenActivityForm={setOpenActivityForm}

@@ -1,6 +1,7 @@
 import React from "react";
 import { Activity } from "../../../types/activity.type";
 import { Button, ButtonGroup, Card, Image } from "semantic-ui-react";
+
 interface Props {
   activity: Activity;
   setSelectedItem: React.Dispatch<React.SetStateAction<Activity | undefined>>;

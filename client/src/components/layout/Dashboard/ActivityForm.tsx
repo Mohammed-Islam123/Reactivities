@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Activity } from "../../../types/activity.type";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
+import agent from "../../../api/agent";
 
 interface Props {
   editedActivity: Activity | undefined;
+  activities: Activity[] | undefined;
   setEditedActivity: React.Dispatch<React.SetStateAction<Activity | undefined>>;
   setSelectedItem: React.Dispatch<React.SetStateAction<Activity | undefined>>;
   setActivities: React.Dispatch<React.SetStateAction<Activity[] | undefined>>;
@@ -15,6 +17,7 @@ const ActivityForm = ({
   setActivities,
   setSelectedItem,
   setOpenActivityForm,
+  activities,
 }: Props) => {
   const initialActivity: Activity = editedActivity ?? {
     id: uuid(),
@@ -28,26 +31,37 @@ const ActivityForm = ({
 
   const [currentActivityValue, setCurrentActivityValue] =
     useState(initialActivity);
-  const handleSubmit = () => {
-    setActivities((old) => {
-      const temp = old ? [...old] : [];
-      const index = temp.findIndex((ele) => ele.id === currentActivityValue.id);
-      if (index === -1) temp.push(currentActivityValue);
-      temp[index] = currentActivityValue;
-      return temp;
-    });
-    setOpenActivityForm(false);
-    setSelectedItem(currentActivityValue);
+  const handleSubmit = async () => {
+    const temp = activities ? activities : [];
+    const index = temp.findIndex((ele) => ele.id === currentActivityValue.id);
+    try {
+      if (index === -1) {
+        const created = await agent.Activities.addActivity(
+          currentActivityValue
+        );
+        created.date = created.date.split("T")[0];
+        setActivities([...temp, created]);
+      } else {
+        await agent.Activities.editActivity(currentActivityValue);
+        temp[index] = currentActivityValue;
+        setActivities(temp);
+      }
+      setSelectedItem(currentActivityValue);
+      setOpenActivityForm(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+
     setCurrentActivityValue({ ...currentActivityValue, [name]: value });
   };
 
   return (
-    <Segment clearing>
+    <Segment clearing style={{ position: "fixed" }}>
       <Form onSubmit={handleSubmit}>
         <Form.Input
           placeholder="Title"
@@ -64,7 +78,7 @@ const ActivityForm = ({
           required
         />
         <Form.Input
-          type="text"
+          type="date"
           placeholder="Date"
           onChange={handleChange}
           name="date"

@@ -1,6 +1,7 @@
 import { Activity } from "../../../types/activity.type";
-import { Button, Item, Label } from "semantic-ui-react";
-import styles from "./DashboradActivity.module.css";
+import { Button, ButtonGroup, Container, Item, Label } from "semantic-ui-react";
+
+import agent from "../../../api/agent";
 interface Props {
   activity: Activity;
   setSelectedItem: React.Dispatch<React.SetStateAction<Activity | undefined>>;
@@ -13,8 +14,13 @@ const DashboradActivity = ({
   setSelectedItem,
   setActivities,
 }: Props) => {
-  function handleDelete(id: string) {
-    setActivities((old) => old?.filter((act) => act.id != id));
+  async function handleDelete(id: string) {
+    try {
+      await agent.Activities.deleteActivity(id);
+      setActivities((old) => old?.filter((act) => act.id != id));
+    } catch (error) {
+      console.error(error);
+    }
   }
   return (
     <Item>
@@ -28,9 +34,9 @@ const DashboradActivity = ({
         <Item.Description>
           {activity.venue}, {activity.city}{" "}
         </Item.Description>
-        <div className={styles.container}>
+        <Container>
           <Label basic> {activity.category} </Label>
-          <div className={styles["button-container"]}>
+          <ButtonGroup attached="left">
             <Button
               color="red"
               content="Delete"
@@ -44,8 +50,8 @@ const DashboradActivity = ({
                 setSelectedItem(activity);
               }}
             />
-          </div>
-        </div>
+          </ButtonGroup>
+        </Container>
       </Item.Content>
     </Item>
   );

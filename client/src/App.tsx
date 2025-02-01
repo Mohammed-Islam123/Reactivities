@@ -1,59 +1,34 @@
 import "axios";
 import { Container } from "semantic-ui-react";
 import NavBar from "./components/common/NavBar";
-import { useEffect, useState } from "react";
-import { Activity } from "./types/activity.type";
+import { useEffect } from "react";
 import ActivitiesDashboard from "./components/layout/Dashboard/ActivitiesDashboard";
 import Loading from "./components/common/Loading";
-import agent from "./api/agent";
+import { useStore } from "./stores/activityStore";
+
+import { observer } from "mobx-react-lite";
 
 function App() {
-  const [activitites, setActivities] = useState<Activity[] | undefined>([]);
-  const [openActivityForm, setOpenActivityForm] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Activity | undefined>();
-  const [editedActivity, setEditedActivity] = useState<Activity | undefined>();
-  const [loading, setLoading] = useState(true);
-  function OpenCreateActivityHandler() {
-    setEditedActivity(undefined);
-    setOpenActivityForm(true);
-    setSelectedItem(undefined);
-  }
-
+  const { activityStore } = useStore();
   useEffect(() => {
-    try {
-      agent.Activities.getAll().then((res) => {
-        res.forEach((act) => (act.date = act.date.split("T")[0]));
-        setActivities(res);
-        setLoading(false);
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
+    activityStore.loadActivities();
+  }, [activityStore]);
 
-  return loading ? (
+  return activityStore.loading ? (
     <Loading />
   ) : (
     <>
-      <NavBar OpenCreateActivityHandler={OpenCreateActivityHandler} />
+      <NavBar />
+
       <Container style={{ marginTop: "8rem" }}>
-        {activitites?.length === 0 ? (
+        {activityStore.activities.size === 0 ? (
           <h1>There is no Activitities</h1>
         ) : (
-          <ActivitiesDashboard
-            activities={activitites}
-            openActivityForm={openActivityForm}
-            setOpenActivityForm={setOpenActivityForm}
-            editedActivity={editedActivity}
-            selectedItem={selectedItem}
-            setEditedActivity={setEditedActivity}
-            setSelectedItem={setSelectedItem}
-            setActivities={setActivities}
-          />
+          <ActivitiesDashboard />
         )}
       </Container>
     </>
   );
 }
 
-export default App;
+export default observer(App);

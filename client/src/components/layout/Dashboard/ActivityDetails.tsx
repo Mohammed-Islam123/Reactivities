@@ -1,45 +1,36 @@
-import React from "react";
-import { Activity } from "../../../types/activity.type";
 import { Button, ButtonGroup, Card, Image } from "semantic-ui-react";
+import { useStore } from "../../../stores/activityStore";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  activity: Activity;
-  setSelectedItem: React.Dispatch<React.SetStateAction<Activity | undefined>>;
-  setEditedActivity: React.Dispatch<React.SetStateAction<Activity | undefined>>;
-  setOpenActivityForm: React.Dispatch<React.SetStateAction<boolean>>;
-}
-const ActivityDetails = ({
-  activity,
-  setSelectedItem,
-  setEditedActivity,
-  setOpenActivityForm,
-}: Props) => {
+const ActivityDetails = () => {
+  const { activityStore } = useStore();
+  const handleEditOnClick = () => {
+    activityStore.setEditedActivity(activityStore.selectedItem);
+    activityStore.setSelectedItem(undefined);
+    activityStore.setOpenActivityForm(true);
+  };
   return (
     <Card fluid>
-      <Image src={`/assets/categoryImages/${activity.category}.jpg`} />
+      <Image
+        src={`/assets/categoryImages/${activityStore.selectedItem?.category}.jpg`}
+      />
       <Card.Content>
-        <Card.Header>{activity.title} </Card.Header>
-        <Card.Meta> {activity.date} </Card.Meta>
-        <Card.Description>{activity.description} </Card.Description>
+        <Card.Header>{activityStore.selectedItem?.title} </Card.Header>
+        <Card.Meta> {activityStore.selectedItem?.date} </Card.Meta>
+        <Card.Description>
+          {activityStore.selectedItem?.description}{" "}
+        </Card.Description>
       </Card.Content>
       <Card.Content extra>
         <ButtonGroup widths={2}>
-          <Button
-            basic
-            color="blue"
-            onClick={() => {
-              setSelectedItem(undefined);
-              setEditedActivity(activity);
-              setOpenActivityForm(true);
-            }}
-          >
+          <Button basic color="blue" onClick={handleEditOnClick}>
             Edit
           </Button>
           <Button
             basic
             color="black"
             onClick={() => {
-              setSelectedItem(undefined);
+              activityStore.setSelectedItem(undefined);
             }}
           >
             Cancel
@@ -50,4 +41,4 @@ const ActivityDetails = ({
   );
 };
 
-export default ActivityDetails;
+export default observer(ActivityDetails);

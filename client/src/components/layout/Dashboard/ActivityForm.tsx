@@ -3,22 +3,21 @@ import { Activity } from "../../../types/activity.type";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
 import agent from "../../../api/agent";
+import { useStore } from "../../../stores/activityStore";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  editedActivity: Activity | undefined;
-  activities: Activity[] | undefined;
-  setEditedActivity: React.Dispatch<React.SetStateAction<Activity | undefined>>;
-  setSelectedItem: React.Dispatch<React.SetStateAction<Activity | undefined>>;
-  setActivities: React.Dispatch<React.SetStateAction<Activity[] | undefined>>;
-  setOpenActivityForm: React.Dispatch<React.SetStateAction<boolean>>;
-}
-const ActivityForm = ({
-  editedActivity,
-  setActivities,
-  setSelectedItem,
-  setOpenActivityForm,
-  activities,
-}: Props) => {
+const ActivityForm = () => {
+  const {
+    activityStore: {
+      editedActivity,
+      activities,
+      setOpenActivityForm,
+      submitting,
+      setSubmitting,
+      setSelectedItem,
+    },
+  } = useStore();
+
   const initialActivity: Activity = editedActivity ?? {
     id: uuid(),
     category: "",
@@ -32,25 +31,26 @@ const ActivityForm = ({
   const [currentActivityValue, setCurrentActivityValue] =
     useState(initialActivity);
   const handleSubmit = async () => {
-    const temp = activities ? activities : [];
-    const index = temp.findIndex((ele) => ele.id === currentActivityValue.id);
+    setSubmitting(true);
+    const exist = activities.has(currentActivityValue.id);
+
     try {
-      if (index === -1) {
+      if (!exist) {
         const created = await agent.Activities.addActivity(
           currentActivityValue
         );
         created.date = created.date.split("T")[0];
-        setActivities([...temp, created]);
+        activities.set(created.id, created);
       } else {
         await agent.Activities.editActivity(currentActivityValue);
-        temp[index] = currentActivityValue;
-        setActivities(temp);
+        activities.set(currentActivityValue.id, currentActivityValue);
       }
       setSelectedItem(currentActivityValue);
       setOpenActivityForm(false);
     } catch (error) {
       console.error(error);
     }
+    setSubmitting(false);
   };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -61,7 +61,7 @@ const ActivityForm = ({
   };
 
   return (
-    <Segment clearing style={{ position: "fixed" }}>
+    <Segment clearing>
       <Form onSubmit={handleSubmit}>
         <Form.Input
           placeholder="Title"
@@ -105,7 +105,7 @@ const ActivityForm = ({
           name="venue"
           value={currentActivityValue.venue}
         />
-        <Button positive type="submit" content="Submit" />
+        <Button loading={submitting} positive type="submit" content="Submit" />
         <Button
           type="button"
           content="Cancel"
@@ -119,4 +119,4 @@ const ActivityForm = ({
   );
 };
 
-export default ActivityForm;
+export default observer(ActivityForm);

@@ -1,25 +1,28 @@
 import { Activity } from "../../../types/activity.type";
-import { Button, ButtonGroup, Container, Item, Label } from "semantic-ui-react";
+import { Button, Item, Label } from "semantic-ui-react";
 
 import agent from "../../../api/agent";
+import { useStore } from "../../../stores/activityStore";
+import { observer } from "mobx-react-lite";
+
 interface Props {
   activity: Activity;
-  setSelectedItem: React.Dispatch<React.SetStateAction<Activity | undefined>>;
-  setActivities: React.Dispatch<React.SetStateAction<Activity[] | undefined>>;
-
-  key: string;
 }
-const DashboradActivity = ({
-  activity,
-  setSelectedItem,
-  setActivities,
-}: Props) => {
+const DashboradActivity = ({ activity }: Props) => {
+  const { activityStore } = useStore();
+
   async function handleDelete(id: string) {
+    activityStore.setDeleting(true);
+    activityStore.setOperationTarget(id);
     try {
       await agent.Activities.deleteActivity(id);
-      setActivities((old) => old?.filter((act) => act.id != id));
+      activityStore.setSelectedItem(undefined);
+      activityStore.activities.delete(id);
     } catch (error) {
       console.error(error);
+    } finally {
+      activityStore.setDeleting(false);
+      activityStore.setOperationTarget("");
     }
   }
   return (
@@ -34,27 +37,31 @@ const DashboradActivity = ({
         <Item.Description>
           {activity.venue}, {activity.city}{" "}
         </Item.Description>
-        <Container>
+        <Item.Extra>
           <Label basic> {activity.category} </Label>
-          <ButtonGroup attached="left">
-            <Button
-              color="red"
-              content="Delete"
-              onClick={() => handleDelete(activity.id)}
-              id={activity.id}
-            />
-            <Button
-              color="blue"
-              content="View"
-              onClick={() => {
-                setSelectedItem(activity);
-              }}
-            />
-          </ButtonGroup>
-        </Container>
+          <Button
+            floated="right"
+            color="blue"
+            content="View"
+            onClick={() => {
+              activityStore.setSelectedItem(activity);
+            }}
+          />{" "}
+          <Button
+            floated="right"
+            color="red"
+            content="Delete"
+            onClick={() => handleDelete(activity.id)}
+            id={activity.id}
+            loading={
+              activityStore.deleting &&
+              activityStore.operationTarget == activity.id
+            }
+          />
+        </Item.Extra>
       </Item.Content>
     </Item>
   );
 };
 
-export default DashboradActivity;
+export default observer(DashboradActivity);

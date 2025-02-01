@@ -1,10 +1,15 @@
 import { Button, Container, Menu, MenuItem } from "semantic-ui-react";
 import styles from "./NavBar.module.css";
+import { useStore } from "../../stores/activityStore";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  OpenCreateActivityHandler: () => void;
-}
-const NavBar = ({ OpenCreateActivityHandler }: Props) => {
+const NavBar = () => {
+  const { activityStore } = useStore();
+  const OpenCreateActivityHandler = () => {
+    activityStore.setOpenActivityForm(true);
+    activityStore.setEditedActivity(undefined);
+    activityStore.setSelectedItem(undefined);
+  };
   return (
     <Menu className={styles.navbar} inverted fixed="top">
       <Container>
@@ -29,4 +34,4 @@ const NavBar = ({ OpenCreateActivityHandler }: Props) => {
   );
 };
 
-export default NavBar;
+export default observer(NavBar);

@@ -1,19 +1,13 @@
 import { Button, Container, Menu, MenuItem } from "semantic-ui-react";
 import styles from "./NavBar.module.css";
-import { useStore } from "../../stores/activityStore";
 import { observer } from "mobx-react-lite";
+import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
-  const { activityStore } = useStore();
-  const OpenCreateActivityHandler = () => {
-    activityStore.setOpenActivityForm(true);
-    activityStore.setEditedActivity(undefined);
-    activityStore.setSelectedItem(undefined);
-  };
   return (
     <Menu className={styles.navbar} inverted fixed="top">
       <Container>
-        <Menu.Item header>
+        <Menu.Item as={NavLink} to="/" header>
           <img
             src="/assets/logo.png"
             alt="logo"
@@ -21,12 +15,13 @@ const NavBar = () => {
           />
           Reactivities
         </Menu.Item>
-        <Menu.Item content="Activities" />
+        <Menu.Item as={NavLink} to="activities" content="Activities" />
         <MenuItem>
           <Button
+            as={NavLink}
+            to="createActivity"
             positive
             content="Create Activity"
-            onClick={OpenCreateActivityHandler}
           />
         </MenuItem>
       </Container>

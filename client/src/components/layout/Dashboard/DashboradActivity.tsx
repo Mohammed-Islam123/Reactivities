@@ -4,6 +4,7 @@ import { Button, Item, Label } from "semantic-ui-react";
 import agent from "../../../api/agent";
 import { useStore } from "../../../stores/activityStore";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 
 interface Props {
   activity: Activity;
@@ -31,7 +32,16 @@ const DashboradActivity = ({ activity }: Props) => {
         verticalAlign="top"
         style={{ padding: "1rem", lineHeight: "150%" }}
       >
-        <Item.Header as={"h2"}> {activity.title} </Item.Header>
+        <Item.Header
+          as={Link}
+          to={`/activities/${activity.id}`}
+          onClick={() => {
+            activityStore.setSelectedItem(activity);
+          }}
+        >
+          {" "}
+          {activity.title}{" "}
+        </Item.Header>
         <Item.Meta>{activity.date} </Item.Meta>
         <Item.Extra>{activity.description} </Item.Extra>
         <Item.Description>
@@ -46,6 +56,8 @@ const DashboradActivity = ({ activity }: Props) => {
             onClick={() => {
               activityStore.setSelectedItem(activity);
             }}
+            as={Link}
+            to={`/activities/${activity.id}`}
           />{" "}
           <Button
             floated="right"

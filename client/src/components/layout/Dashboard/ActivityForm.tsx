@@ -1,24 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Activity } from "../../../types/activity.type";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
 import agent from "../../../api/agent";
 import { useStore } from "../../../stores/activityStore";
 import { observer } from "mobx-react-lite";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const ActivityForm = () => {
   const {
     activityStore: {
-      editedActivity,
       activities,
-      setOpenActivityForm,
       submitting,
+      selectedItem,
       setSubmitting,
       setSelectedItem,
+      setEditedActivity,
+      loadSingleActivity,
     },
   } = useStore();
 
-  const initialActivity: Activity = editedActivity ?? {
+  const { id } = useParams();
+
+  const [currentActivityValue, setCurrentActivityValue] = useState<Activity>({
     id: uuid(),
     category: "",
     city: "",
@@ -26,10 +30,16 @@ const ActivityForm = () => {
     description: "",
     title: "",
     venue: "",
-  };
+  });
 
-  const [currentActivityValue, setCurrentActivityValue] =
-    useState(initialActivity);
+  useEffect(() => {
+    if (!id) return;
+    loadSingleActivity(id).then(() => {
+      if (selectedItem) setCurrentActivityValue(selectedItem);
+    });
+  }, [id, selectedItem, loadSingleActivity, setSelectedItem]);
+  const navigate = useNavigate();
+
   const handleSubmit = async () => {
     setSubmitting(true);
     const exist = activities.has(currentActivityValue.id);
@@ -39,18 +49,21 @@ const ActivityForm = () => {
         const created = await agent.Activities.addActivity(
           currentActivityValue
         );
+
         created.date = created.date.split("T")[0];
+        currentActivityValue.id = created.id;
         activities.set(created.id, created);
       } else {
         await agent.Activities.editActivity(currentActivityValue);
         activities.set(currentActivityValue.id, currentActivityValue);
       }
       setSelectedItem(currentActivityValue);
-      setOpenActivityForm(false);
     } catch (error) {
       console.error(error);
     }
     setSubmitting(false);
+    setEditedActivity(undefined);
+    navigate(`/activities/${currentActivityValue.id}`);
   };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -110,9 +123,14 @@ const ActivityForm = () => {
           type="button"
           content="Cancel"
           onClick={() => {
-            setOpenActivityForm(false);
-            if (editedActivity) setSelectedItem(editedActivity);
+            if (selectedItem) setSelectedItem(selectedItem);
           }}
+          as={Link}
+          to={
+            currentActivityValue.category == ""
+              ? `/activities`
+              : `/activities/${currentActivityValue.id}`
+          }
         />{" "}
       </Form>
     </Segment>

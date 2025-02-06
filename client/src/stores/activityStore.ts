@@ -9,7 +9,7 @@ class activityStore {
   openActivityForm: boolean = false;
   selectedItem: Activity | undefined;
   editedActivity: Activity | undefined;
-  loading: boolean = true;
+  loading: boolean = false;
   submitting: boolean = false;
   operationTarget = "";
   deleting = false;
@@ -18,8 +18,11 @@ class activityStore {
   }
   loadActivities = async () => {
     try {
+      this.setLoadingState(true);
       (await agent.Activities.getAll()).forEach((act) => {
-        this.activities.set(act.id, act);
+        runInAction(() => {
+          this.activities.set(act.id, act);
+        });
       });
       runInAction(() => {
         this.activities.forEach((act) => {
@@ -57,6 +60,20 @@ class activityStore {
   };
   setDeleting = (state: boolean) => {
     this.deleting = state;
+  };
+  loadSingleActivity = async (id: string) => {
+    if (!this.selectedItem) {
+      try {
+        this.setLoadingState(true);
+        const act = await agent.Activities.getOne(id);
+        act.date = act.date.split("T")[0];
+        this.selectedItem = act;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.setLoadingState(false);
+      }
+    }
   };
 }
 interface Store {

@@ -1,14 +1,22 @@
 import { Grid, GridColumn, Item, Segment } from "semantic-ui-react";
 import DashboradActivity from "./DashboradActivity";
-import ActivityDetails from "./ActivityDetails";
-import ActivityForm from "./ActivityForm";
 import { useStore } from "../../../stores/activityStore";
 import { observer } from "mobx-react-lite";
+import Loading from "../../common/Loading";
+import { useEffect } from "react";
 
 const ActivitiesDashboard = () => {
   const { activityStore } = useStore();
 
-  return (
+  useEffect(() => {
+    if (activityStore.activities.size === 0) activityStore.loadActivities();
+  }, [activityStore]);
+
+  return activityStore.loading ? (
+    <Loading />
+  ) : activityStore.activities.size === 0 ? (
+    <h1>There is no Activitities</h1>
+  ) : (
     <Grid>
       <GridColumn width={9} style={{ padding: "0" }}>
         <Segment>
@@ -20,15 +28,7 @@ const ActivitiesDashboard = () => {
         </Segment>
       </GridColumn>
       <GridColumn width={1}></GridColumn>
-      <GridColumn width="6">
-        {activityStore.selectedItem ? (
-          <ActivityDetails />
-        ) : (
-          activityStore.openActivityForm && <ActivityForm />
-        )}
-      </GridColumn>
     </Grid>
   );
 };
-
 export default observer(ActivitiesDashboard);

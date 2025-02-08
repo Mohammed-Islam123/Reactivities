@@ -4,7 +4,7 @@ import { Activity } from "../types/activity.type";
 import agent from "../api/agent";
 
 class activityStore {
-  activities: Map<string, Activity> = new Map();
+  activitiesMap: Map<string, Activity> = new Map();
 
   openActivityForm: boolean = false;
   selectedItem: Activity | undefined;
@@ -13,20 +13,18 @@ class activityStore {
   submitting: boolean = false;
   operationTarget = "";
   deleting = false;
+
   constructor() {
     makeAutoObservable(this);
   }
   loadActivities = async () => {
     try {
       this.setLoadingState(true);
-      (await agent.Activities.getAll()).forEach((act) => {
+      const temp = await agent.Activities.getAll();
+      temp.forEach((act) => {
         runInAction(() => {
-          this.activities.set(act.id, act);
-        });
-      });
-      runInAction(() => {
-        this.activities.forEach((act) => {
           act.date = act.date.split("T")[0];
+          this.activitiesMap.set(act.id, act);
         });
       });
     } catch (error) {
@@ -35,6 +33,23 @@ class activityStore {
       this.setLoadingState(false);
     }
   };
+  get activitiesByDate() {
+    return Array.from(this.activitiesMap.values()).sort(
+      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+    );
+  }
+  get groupedActivities() {
+    return Object.entries(
+      this.activitiesByDate.reduce(
+        (acc: { [key: string]: Activity[] }, act) => {
+          if (!acc[act.date]) acc[act.date] = [act];
+          else acc[act.date] = [...acc[act.date], act];
+          return acc;
+        },
+        {} as { [key: string]: Activity[] }
+      )
+    );
+  }
   setLoadingState = (state: boolean) => {
     this.loading = state;
   };
@@ -49,7 +64,7 @@ class activityStore {
   };
   setActivities = (Activities: Activity[]) => {
     Activities.forEach((act) => {
-      this.activities.set(act.id, act);
+      this.activitiesMap.set(act.id, act);
     });
   };
   setSubmitting = (state: boolean) => {

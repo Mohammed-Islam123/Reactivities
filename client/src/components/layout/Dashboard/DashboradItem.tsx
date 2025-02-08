@@ -1,5 +1,5 @@
 import { Activity } from "../../../types/activity.type";
-import { Button, Item, Label } from "semantic-ui-react";
+import { Button, Icon, Item, Segment } from "semantic-ui-react";
 
 import agent from "../../../api/agent";
 import { useStore } from "../../../stores/activityStore";
@@ -27,7 +27,52 @@ const DashboradActivity = ({ activity }: Props) => {
     }
   }
   return (
-    <Item>
+    <Segment.Group>
+      <Segment>
+        <Item.Group>
+          <Item>
+            <Item.Image src="/assets/user.png" circular size="tiny" />
+            <Item.Content>
+              <Item.Header as={Link} to={`/activities/${activity.id}`}>
+                {activity.title}
+              </Item.Header>
+              <Item.Description> Hosted By Bob </Item.Description>
+            </Item.Content>
+          </Item>
+        </Item.Group>
+      </Segment>
+      <Segment>
+        <span>
+          <Icon name="clock" /> {activity.date}
+        </span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span>
+          <Icon name="marker" />
+          {activity.city}
+        </span>
+      </Segment>
+      <Segment secondary>Attendies goes here</Segment>
+      <Segment>{activity.description} </Segment>
+      <Segment clearing>
+        <Button
+          floated="right"
+          color="teal"
+          content="View"
+          onClick={() => {
+            activityStore.setSelectedItem(activity);
+          }}
+          as={Link}
+          to={`/activities/${activity.id}`}
+        />
+      </Segment>
+    </Segment.Group>
+  );
+};
+
+export default observer(DashboradActivity);
+
+/**
+ *   <Item>
       <Item.Content
         verticalAlign="top"
         style={{ padding: "1rem", lineHeight: "150%" }}
@@ -39,8 +84,12 @@ const DashboradActivity = ({ activity }: Props) => {
             activityStore.setSelectedItem(activity);
           }}
         >
-          {" "}
-          {activity.title}{" "}
+          <Image
+            src="https://react.semantic-ui.com/images/wireframe/square-image.png"
+            avatar
+            size="tiny"
+          />
+          {activity.title}
         </Item.Header>
         <Item.Meta>{activity.date} </Item.Meta>
         <Item.Extra>{activity.description} </Item.Extra>
@@ -73,7 +122,5 @@ const DashboradActivity = ({ activity }: Props) => {
         </Item.Extra>
       </Item.Content>
     </Item>
-  );
-};
-
-export default observer(DashboradActivity);
+ 
+ */

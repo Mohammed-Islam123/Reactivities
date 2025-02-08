@@ -10,7 +10,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 const ActivityForm = () => {
   const {
     activityStore: {
-      activities,
+      activitiesMap,
       submitting,
       selectedItem,
       setSubmitting,
@@ -42,7 +42,7 @@ const ActivityForm = () => {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    const exist = activities.has(currentActivityValue.id);
+    const exist = activitiesMap.has(currentActivityValue.id);
 
     try {
       if (!exist) {
@@ -52,10 +52,10 @@ const ActivityForm = () => {
 
         created.date = created.date.split("T")[0];
         currentActivityValue.id = created.id;
-        activities.set(created.id, created);
+        activitiesMap.set(created.id, created);
       } else {
         await agent.Activities.editActivity(currentActivityValue);
-        activities.set(currentActivityValue.id, currentActivityValue);
+        activitiesMap.set(currentActivityValue.id, currentActivityValue);
       }
       setSelectedItem(currentActivityValue);
     } catch (error) {

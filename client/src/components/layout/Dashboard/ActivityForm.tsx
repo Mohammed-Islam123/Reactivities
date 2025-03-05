@@ -3,7 +3,7 @@ import { Activity } from "../../../types/activity.type";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
 import agent from "../../../api/agent";
-import { useStore } from "../../../stores/activityStore";
+import { useStore } from "../../../stores/Store";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
 

@@ -1,5 +1,5 @@
 import { Grid } from "semantic-ui-react";
-import { useStore } from "../../../stores/activityStore";
+import { useStore } from "../../../stores/Store";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 

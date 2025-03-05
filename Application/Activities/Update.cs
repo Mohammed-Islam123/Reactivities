@@ -1,6 +1,7 @@
 ﻿
+using Application.Core;
+using Application.DTOs;
 using AutoMapper;
-using Domain;
 using MediatR;
 using Persistence;
 
@@ -8,13 +9,13 @@ namespace Application.Activities;
 
 public class Update
 {
-    public class UpdateCommand:IRequest
+    public class UpdateCommand:IRequest<Result<bool>>
     {
         public Guid id { get; set; }
-        public Activity Activity { get; set; }
+        public EditActivityDto Activity { get; set; }
     }
 
-    public class UpdateCommandHandler : IRequestHandler<UpdateCommand>
+    public class UpdateCommandHandler : IRequestHandler<UpdateCommand, Result<bool>>
     {
         private readonly ReactivitiesDbContex _contex;
         private readonly IMapper _mapper;
@@ -25,14 +26,15 @@ public class Update
             _mapper = mapper;
         }
 
-        public async Task Handle(UpdateCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(UpdateCommand request, CancellationToken cancellationToken)
         {
             var result = await _contex.Activities.FindAsync(request.id);
-            if (result is null) 
-                throw new ArgumentException();
+            if (result is null )
+                return Result<bool>.Failure("Activity Not Exist", 404);
+            
             _mapper.Map(request.Activity, result);
-
-            await _contex.SaveChangesAsync();
+   
+            return (await _contex.SaveChangesAsync())> 0? Result<bool>.Success(true) : Result<bool>.Failure("Error During Saving", 500);
         }
 
      

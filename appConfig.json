@@ -1,0 +1,7 @@
+{
+    "FrontendDirectory": "/mnt/60D2B11CD2B0F77E/learning/roadToFullStack/projects/Reactivities/Reactivities/client",
+    "FrontendCommand": "npm run dev",
+    "BackendDirectory": "/mnt/60D2B11CD2B0F77E/learning/roadToFullStack/projects/Reactivities/Reactivities/API",
+    "BackendCommand": "dotnet run",
+    "CloseScriptAfterRun": false
+}

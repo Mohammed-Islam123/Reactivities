@@ -3,6 +3,8 @@ import App from "../App";
 import ActivitiesDashboard from "../components/layout/Dashboard/ActivitiesDashboard";
 import ActivityForm from "../components/layout/Dashboard/ActivityForm";
 import ActivityDetails from "../components/layout/Dashboard/ActivityDetails";
+import TestErrors from "../components/layout/Errors/TestErrors";
+import NotFound from "../components/layout/Errors/NotFound";
 
 const routes: RouteObject[] = [
   {
@@ -24,6 +26,18 @@ const routes: RouteObject[] = [
       {
         path: "createActivity",
         element: <ActivityForm key={"create"} />,
+      },
+      {
+        path: "errors",
+        element: <TestErrors />,
+      },
+      {
+        path: "not-found",
+        element: <NotFound />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
       },
     ],
   },

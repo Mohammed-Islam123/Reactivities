@@ -1,5 +1,4 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { createContext, useContext } from "react";
 import { Activity } from "../types/activity.type";
 import agent from "../api/agent";
 
@@ -91,13 +90,4 @@ class activityStore {
     }
   };
 }
-interface Store {
-  activityStore: activityStore;
-}
-export const store: Store = {
-  activityStore: new activityStore(),
-};
-export const StoreContext = createContext(store);
-export function useStore() {
-  return useContext(StoreContext);
-}
+export { activityStore };

@@ -1,9 +1,10 @@
 ﻿using Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
-public class ReactivitiesDbContex:DbContext
+public class ReactivitiesDbContex:IdentityDbContext<AppUser>
 {
     public ReactivitiesDbContex(DbContextOptions options) : base(options)
     {

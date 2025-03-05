@@ -1,4 +1,4 @@
-import { Button, Container, Menu, MenuItem } from "semantic-ui-react";
+import { Button, Container, Menu } from "semantic-ui-react";
 import styles from "./NavBar.module.css";
 import { observer } from "mobx-react-lite";
 import { NavLink } from "react-router-dom";
@@ -16,14 +16,15 @@ const NavBar = () => {
           Reactivities
         </Menu.Item>
         <Menu.Item as={NavLink} to="activities" content="Activities" />
-        <MenuItem>
+        <Menu.Item as={NavLink} to="errors" content="Test Errors" />
+        <Menu.Item>
           <Button
             as={NavLink}
             to="createActivity"
             positive
             content="Create Activity"
           />
-        </MenuItem>
+        </Menu.Item>
       </Container>
     </Menu>
   );

@@ -2,9 +2,10 @@ import { Activity } from "../../../types/activity.type";
 import { Button, Icon, Item, Segment } from "semantic-ui-react";
 
 import agent from "../../../api/agent";
-import { useStore } from "../../../stores/activityStore";
+
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
+import { useStore } from "../../../stores/Store";
 
 interface Props {
   activity: Activity;

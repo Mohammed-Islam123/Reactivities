@@ -1,60 +1,58 @@
-﻿using API.DTOs;
-using Application.Activities;
+﻿using Application.Activities;
+using Application.DTOs;
 using Domain;
-using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class ActivitiesController: BaseController
+public class ActivitiesController : BaseController
 {
 
-   
+
 
     [HttpGet]
     public async Task<ActionResult<List<Activity>>> GetActivities()
     {
-        return await Mediator.Send(new List.Query());
+
+        return HandleResult(await Mediator.Send(new List.Query()));
     }
 
-    [HttpGet("{id}", Name = "GetActivity") ]
-    
+
+
+
+    [HttpGet("{id}", Name = "GetActivity")]
     public async Task<ActionResult<Activity>> GetActivity(Guid id)
     {
-        var result  = await Mediator.Send(new Details.Query{Guid = id});
-        return result is null ? NotFound() : result;
+        return HandleResult<Activity>(await Mediator.Send(new Details.Query { Guid = id }));
     }
 
     [HttpPost]
 
-    public async Task<ActionResult> CreateActivity(Activity activity)
+    public async Task<ActionResult> CreateActivity(CreateActivityDto activityDto)
     {
-        await Mediator.Send(new Create.CreateActivityCommand { activity = activity });
-        return CreatedAtRoute("GetActivity", new {id = activity.Id}, activity);
+
+        var result = await Mediator.Send(new Create.CreateActivityCommand { ActivityDto = activityDto });
+        return !result.IsSuccess ? HandleResult(result) : CreatedAtRoute("GetActivity", new { id = result.Value }, new { id = result.Value, activityDto });
     }
 
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateActivity(Guid id,Activity activity)
+    public async Task<ActionResult> UpdateActivity(Guid id, EditActivityDto activity)
     {
-        await Mediator.Send(new Update.UpdateCommand { id = id, Activity = activity });
-        return NoContent();
+        var result = await Mediator.Send(new Update.UpdateCommand { id = id, Activity = activity });
+
+        return result.IsSuccess ? NoContent() : HandleResult(result);
 
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteActivity(Guid id)
     {
-        try
-        {
-            await Mediator.Send(new Delete.DeleteCommand { Guid = id });
-            return NoContent();
-        }
-        catch (ArgumentNullException e)
-        {
+        var result = await Mediator.Send(new Delete.DeleteCommand { Guid = id });
 
-            return NotFound();
-        }
+        return result.IsSuccess ? NoContent() : HandleResult(result);
     }
-    
+
+
 }

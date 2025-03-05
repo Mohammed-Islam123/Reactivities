@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
 using Persistence;
 
@@ -6,20 +7,32 @@ namespace Application.Activities;
 
 public class Details
 {
-    public class Query: IRequest<Activity>
+    public class Query: IRequest<Result<Activity>>
     {
         public Guid Guid { get; set; }
     }
-    public class QueryHandler: IRequestHandler<Query, Activity>
+    public class QueryHandler: IRequestHandler<Query, Result<Activity>>
     {
         private ReactivitiesDbContex _context;
         public QueryHandler(ReactivitiesDbContex dbContex)
         {
             _context = dbContex;
         }
-        public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<Activity>> Handle(Query request, CancellationToken cancellationToken)
         {
-            return await _context.Activities.FindAsync(request.Guid);
+            var result =  await _context.Activities.FindAsync(request.Guid);
+            return result is null
+                ? new Result<Activity>()
+                {
+                    Error = "Activity Not Found",
+                    Code = 404,
+                    IsSuccess = false
+                }
+                : new()
+                {
+                    IsSuccess = true,
+                    Value = result
+                };
         }
 
        

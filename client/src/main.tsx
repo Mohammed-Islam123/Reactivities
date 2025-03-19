@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "semantic-ui-css/semantic.min.css";
 import "./index.css";
+import "react-datepicker/dist/react-datepicker.css";
 import { store, StoreContext } from "./stores/Store.ts";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router/Router.tsx";

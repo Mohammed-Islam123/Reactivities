@@ -1,10 +1,10 @@
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import App from "../App";
-import ActivitiesDashboard from "../components/layout/Dashboard/ActivitiesDashboard";
-import ActivityForm from "../components/layout/Dashboard/ActivityForm";
-import ActivityDetails from "../components/layout/Dashboard/ActivityDetails";
-import TestErrors from "../components/layout/Errors/TestErrors";
-import NotFound from "../components/layout/Errors/NotFound";
+import ActivitiesDashboard from "../components/features/Dashboard/ActivitiesDashboard";
+import ActivityForm from "../components/features/Dashboard/ActivityForm";
+import ActivityDetails from "../components/features/Dashboard/ActivityDetails";
+import TestErrors from "../components/features/Errors/TestErrors";
+import NotFound from "../components/features/Errors/NotFound";
 
 const routes: RouteObject[] = [
   {
@@ -20,7 +20,7 @@ const routes: RouteObject[] = [
         element: <ActivityDetails />,
       },
       {
-        path: "activities/:id/edit",
+        path: "activities/edit/:id",
         element: <ActivityForm key={"edit"} />,
       },
       {

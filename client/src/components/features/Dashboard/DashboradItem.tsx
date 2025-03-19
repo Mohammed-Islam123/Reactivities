@@ -44,7 +44,7 @@ const DashboradActivity = ({ activity }: Props) => {
       </Segment>
       <Segment>
         <span>
-          <Icon name="clock" /> {activity.date}
+          <Icon name={"clock"} /> {activity.date.toDateString()}
         </span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <span>

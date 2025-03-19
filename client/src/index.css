@@ -9,6 +9,9 @@ body {
 }
 /*home page styles*/
 
+.react-datepicker-wrapper {
+  width: 100%;
+}
 .masterhead {
   display: flex;
   align-items: center;

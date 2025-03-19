@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { Activity } from "../types/activity.type";
 import agent from "../api/agent";
+import { format } from "date-fns";
 
 class activityStore {
   activitiesMap: Map<string, Activity> = new Map();
@@ -22,7 +23,7 @@ class activityStore {
       const temp = await agent.Activities.getAll();
       temp.forEach((act) => {
         runInAction(() => {
-          act.date = act.date.split("T")[0];
+          act.date = new Date(act.date);
           this.activitiesMap.set(act.id, act);
         });
       });
@@ -34,15 +35,16 @@ class activityStore {
   };
   get activitiesByDate() {
     return Array.from(this.activitiesMap.values()).sort(
-      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+      (a, b) => a.date.getTime() - b.date.getTime()
     );
   }
   get groupedActivities() {
     return Object.entries(
       this.activitiesByDate.reduce(
         (acc: { [key: string]: Activity[] }, act) => {
-          if (!acc[act.date]) acc[act.date] = [act];
-          else acc[act.date] = [...acc[act.date], act];
+          const date = format(act.date, "dd MMM yyyy");
+          if (!acc[date]) acc[date] = [act];
+          else acc[date] = [...acc[date], act];
           return acc;
         },
         {} as { [key: string]: Activity[] }
@@ -80,7 +82,7 @@ class activityStore {
       try {
         this.setLoadingState(true);
         const act = await agent.Activities.getOne(id);
-        act.date = act.date.split("T")[0];
+        act.date = new Date(act.date);
         this.selectedItem = act;
       } catch (error) {
         console.error(error);

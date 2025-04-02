@@ -5,26 +5,33 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
-[AllowAnonymous]
+// [AllowAnonymous]
 public class ActivitiesController : BaseController
 {
 
 
 
     [HttpGet]
-    public async Task<ActionResult<List<Activity>>> GetActivities()
+    public async Task<ActionResult<List<GetActivityDto>>> GetActivities()
     {
-
-        return HandleResult(await Mediator.Send(new List.Query()));
+        var result = await Mediator.Send(new List.Query());
+        return HandleResult(result);
     }
 
 
 
 
     [HttpGet("{id}", Name = "GetActivity")]
-    public async Task<ActionResult<Activity>> GetActivity(Guid id)
+    public async Task<ActionResult<GetActivityDto>> GetActivity(Guid id)
     {
-        return HandleResult<Activity>(await Mediator.Send(new Details.Query { Guid = id }));
+        return HandleResult(await Mediator.Send(new Details.Query { Guid = id }));
+    }
+
+
+    [HttpPost("{id}/attend", Name = "AttendActivity")]
+    public async Task<ActionResult<GetActivityDto>> AttendActivity(Guid id)
+    {
+        return HandleResult(await Mediator.Send(new UpdateAttendace.Command { Guid = id }));
     }
 
     [HttpPost]
@@ -36,9 +43,9 @@ public class ActivitiesController : BaseController
         return !result.IsSuccess ? HandleResult(result) : CreatedAtRoute("GetActivity", new { id = result.Value }, new { id = result.Value, activityDto });
     }
 
-
+    [Authorize("IsActivityHost")]
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateActivity(Guid id, EditActivityDto activity)
+    public async Task<ActionResult> UpdateActivity(Guid id, BaseActivityDTO activity)
     {
         var result = await Mediator.Send(new Update.UpdateCommand { id = id, Activity = activity });
 

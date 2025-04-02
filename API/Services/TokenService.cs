@@ -1,4 +1,3 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -11,9 +10,10 @@ public class TokenService
     public string CreateToken(AppUser user)
     {
         var claims = new List<Claim> {
-            new Claim(ClaimTypes.Name, user.UserName!),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email!)
+            new(ClaimTypes.Name, user.UserName!),
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.Email, user.Email!),
+
         };
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("me3iyGlbJGkX9jmbmALUiyTfn9hIvs4pBdCJd7gOqAJZlLdMDXPeT7zozT84DRGi"));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);

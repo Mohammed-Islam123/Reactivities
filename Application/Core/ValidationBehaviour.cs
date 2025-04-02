@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Core;
 
-public class ValidationBehaviour<TRequest, TResponce> (IValidator<TRequest> validator=null):IPipelineBehavior<TRequest, TResponce> where TRequest:notnull
+public class ValidationBehaviour<TRequest, TResponce>(IValidator<TRequest>? validator = null) : IPipelineBehavior<TRequest, TResponce> where TRequest : notnull
 {
     public async Task<TResponce> Handle(TRequest request, RequestHandlerDelegate<TResponce> next, CancellationToken cancellationToken)
     {

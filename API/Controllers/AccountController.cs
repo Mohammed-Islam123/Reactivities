@@ -1,9 +1,7 @@
 using System.Security.Claims;
-using System.Threading.Tasks;
 using API.DTOs;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,8 +42,14 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<UserDTO>> RegisterUser(SignUpDTO signUpDTO)
     {
         var result = await _authServices.RegisterUserAsync(signUpDTO);
-        if (!result.IsSuccess)
-            return BadRequest(result.Error);
+        if (!result.IsSuccess && result.Error != null)
+        {
+            foreach (var error in result.Error)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+            return ValidationProblem();
+        }
         return Ok(result.Value);
     }
 
@@ -68,7 +72,9 @@ public class AccountController : ControllerBase
             DisplayName = user.DisplayName,
             Image = null!,
             UserName = user.UserName!,
-            Token = _tokenService.CreateToken(user)
+            Token = _tokenService.CreateToken(user),
+            Email = user.Email!
+
         };
     }
 }

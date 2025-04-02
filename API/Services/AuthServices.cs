@@ -1,6 +1,5 @@
 using API.Core;
 using API.DTOs;
-using Application.Core;
 using Microsoft.AspNetCore.Identity;
 using Persistence;
 
@@ -36,7 +35,8 @@ public class AuthServices
             DisplayName = user.DisplayName,
             UserName = user.UserName,
             Image = "",
-            Token = _tokenService.CreateToken(user)
+            Token = _tokenService.CreateToken(user),
+            Email = user.Email
         });
     }
 }

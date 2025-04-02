@@ -3,9 +3,7 @@ using API.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);

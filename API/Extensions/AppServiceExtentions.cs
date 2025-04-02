@@ -5,8 +5,10 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
-using API.Core;
 using API.Services;
+using Application.Interfaces;
+using Infrastructure.Security;
+using Microsoft.AspNetCore.Authorization;
 namespace API.Extensions;
 
 public static class AppServiceExtentions
@@ -30,7 +32,16 @@ public static class AppServiceExtentions
             conf.AddOpenBehavior(typeof(ValidationBehaviour<,>));
         });
         collection.AddScoped<AuthServices>();
-
+        collection.AddHttpContextAccessor();
+        collection.AddScoped<IUserAccessor, UserAccessor>();
+        IServiceCollection serviceCollection = collection.AddAuthorization(opt =>
+        {
+            opt.AddPolicy("IsActivityHost", policy =>
+            {
+                policy.AddRequirements(new IsHostRequirment());
+            });
+        });
+        collection.AddTransient<IAuthorizationHandler, IsRequestRequirmentHandler>();
         return collection;
     }
 }

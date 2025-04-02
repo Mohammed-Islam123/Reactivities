@@ -45,7 +45,7 @@ const ActivityForm = () => {
   }, [id, selectedItem, loadSingleActivity, setSelectedItem]);
   const navigate = useNavigate();
 
-  const handleSubmit = async (activity: Activity) => {
+  const handleFormSubmit = async (activity: Activity) => {
     setSubmitting(true);
     const exist = activitiesMap.has(activity.id);
 
@@ -67,13 +67,7 @@ const ActivityForm = () => {
     setEditedActivity(undefined);
     navigate(`/activities/${activity.id}`);
   };
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
 
-    setCurrentActivityValue({ ...currentActivityValue, [name]: value });
-  };
   const validationSchema = Yup.object({
     title: Yup.string().required(),
     date: Yup.string().required(),
@@ -87,7 +81,7 @@ const ActivityForm = () => {
       <Formik
         initialValues={currentActivityValue}
         onSubmit={(values) => {
-          handleSubmit(values);
+          handleFormSubmit(values);
         }}
         enableReinitialize
         validationSchema={validationSchema}
@@ -98,7 +92,8 @@ const ActivityForm = () => {
             <ValidatedField
               placeholder="Description"
               name="description"
-              type="textarea"
+              type="text"
+              inputType="textarea"
               rows={4}
             />
             <CustomSelect

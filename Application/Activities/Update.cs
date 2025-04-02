@@ -9,10 +9,10 @@ namespace Application.Activities;
 
 public class Update
 {
-    public class UpdateCommand:IRequest<Result<bool>>
+    public class UpdateCommand : IRequest<Result<bool>>
     {
         public Guid id { get; set; }
-        public EditActivityDto Activity { get; set; }
+        public BaseActivityDTO Activity { get; set; } = null!;
     }
 
     public class UpdateCommandHandler : IRequestHandler<UpdateCommand, Result<bool>>
@@ -29,15 +29,15 @@ public class Update
         public async Task<Result<bool>> Handle(UpdateCommand request, CancellationToken cancellationToken)
         {
             var result = await _contex.Activities.FindAsync(request.id);
-            if (result is null )
+            if (result is null)
                 return Result<bool>.Failure("Activity Not Exist", 404);
-            
+
             _mapper.Map(request.Activity, result);
-   
-            return (await _contex.SaveChangesAsync())> 0? Result<bool>.Success(true) : Result<bool>.Failure("Error During Saving", 500);
+
+            return (await _contex.SaveChangesAsync()) > 0 ? Result<bool>.Success(true) : Result<bool>.Failure("Error During Saving", 500);
         }
 
-     
+
     }
-    
+
 }

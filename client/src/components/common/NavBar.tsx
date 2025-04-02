@@ -1,9 +1,12 @@
-import { Button, Container, Menu } from "semantic-ui-react";
+import { Button, Container, Dropdown, Image, Menu } from "semantic-ui-react";
 import styles from "./NavBar.module.css";
 import { observer } from "mobx-react-lite";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { useStore } from "../../stores/Store";
 
 const NavBar = () => {
+  const { logout, currentUser } = useStore().userStore;
+
   return (
     <Menu className={styles.navbar} inverted fixed="top">
       <Container>
@@ -25,6 +28,28 @@ const NavBar = () => {
             content="Create Activity"
           />
         </Menu.Item>
+        {currentUser && (
+          <Menu.Item position="right">
+            <Image src={`/assets/user.png`} avatar spaced="right" />
+
+            <Dropdown pointing="top left" text={currentUser?.displayName}>
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  as={Link}
+                  to={`/profile/${currentUser?.username}`}
+                  content="My profile"
+                />
+                <Dropdown.Item
+                  as={Link}
+                  to={`/`}
+                  content="Logout"
+                  onClick={() => logout()}
+                  icon="power"
+                />
+              </Dropdown.Menu>
+            </Dropdown>
+          </Menu.Item>
+        )}
       </Container>
     </Menu>
   );

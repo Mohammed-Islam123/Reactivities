@@ -3,8 +3,14 @@ import { Activity } from "../types/activity.type";
 import { delay } from "../utils/helpers";
 import { toast } from "react-toastify";
 import { router } from "../router/Router";
+import userLogin, { User } from "../types/user.type";
+import { store } from "../stores/Store";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+axios.interceptors.request.use((conf) => {
+  conf.headers.Authorization = `Bearer ${store.userStore.token}`;
+  return conf;
+});
 axios.interceptors.response.use(
   async (res) => {
     await delay(1000);
@@ -59,7 +65,15 @@ const Activities = {
   deleteActivity: (id: string) => request.delete<void>(`/activities/${id}`),
 };
 
+const Account = {
+  currentUser: async () => await request.get<User>("/account"),
+  login: async (userData: userLogin) =>
+    await request.post<User>("/account/login", userData),
+  register: async (userData: userLogin) =>
+    await request.post<User>("/account/register", userData),
+};
 const agent = {
   Activities,
+  Account,
 };
 export default agent;

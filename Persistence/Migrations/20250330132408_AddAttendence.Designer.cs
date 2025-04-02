@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ReactivitiesDbContex))]
-    partial class ReactivitiesDbContexModelSnapshot : ModelSnapshot
+    [Migration("20250330132408_AddAttendence")]
+    partial class AddAttendence
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -26,7 +29,6 @@ namespace Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Bio")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -34,7 +36,6 @@ namespace Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DisplayName")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -96,29 +97,21 @@ namespace Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Category")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsCancelled")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Venue")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -126,7 +119,7 @@ namespace Persistence.Migrations
                     b.ToTable("Activities");
                 });
 
-            modelBuilder.Entity("Domain.Attendee", b =>
+            modelBuilder.Entity("Domain.Attendance", b =>
                 {
                     b.Property<Guid>("ActivityId")
                         .HasColumnType("TEXT");
@@ -141,7 +134,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Attendees");
+                    b.ToTable("Attendances");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -272,16 +265,16 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Attendee", b =>
+            modelBuilder.Entity("Domain.Attendance", b =>
                 {
                     b.HasOne("Domain.Activity", "Activity")
-                        .WithMany("Attendees")
+                        .WithMany("Attendances")
                         .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AppUser", "AppUser")
-                        .WithMany("Attendees")
+                        .WithMany("Attendances")
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -344,12 +337,12 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("AppUser", b =>
                 {
-                    b.Navigation("Attendees");
+                    b.Navigation("Attendances");
                 });
 
             modelBuilder.Entity("Domain.Activity", b =>
                 {
-                    b.Navigation("Attendees");
+                    b.Navigation("Attendances");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,3 @@
-using System.IO.Compression;
-
 namespace API.DTOs;
 public class UserDTO
 {
@@ -7,4 +5,5 @@ public class UserDTO
     public string Token { get; set; } = "";
     public string Image { get; set; } = "";
     public string UserName { get; set; } = "";
+    public string Email { get; set; } = "";
 }

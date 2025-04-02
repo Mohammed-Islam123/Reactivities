@@ -52,7 +52,7 @@ export default observer(function ActivityDetailedHeader({ activity }: Props) {
         </Segment>
         <Segment clearing attached="bottom">
           <Button color="teal">Join Activity</Button>
-          <Button>Cancel attendance</Button>
+          <Button>Cancel Attendance</Button>
           <Button
             as={Link}
             to={`/activities/edit/${activity.id}`}

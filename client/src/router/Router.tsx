@@ -5,12 +5,22 @@ import ActivityForm from "../components/features/Dashboard/ActivityForm";
 import ActivityDetails from "../components/features/Dashboard/ActivityDetails";
 import TestErrors from "../components/features/Errors/TestErrors";
 import NotFound from "../components/features/Errors/NotFound";
+import LoginForm from "../components/features/Auth/LoginForm";
+import RegisterForm from "../components/features/Auth/RegisterForm";
 
 const routes: RouteObject[] = [
   {
     path: "/",
     element: <App />,
     children: [
+      {
+        path: "login",
+        element: <LoginForm />,
+      },
+      {
+        path: "register",
+        element: <RegisterForm />,
+      },
       {
         path: "activities",
         element: <ActivitiesDashboard />,

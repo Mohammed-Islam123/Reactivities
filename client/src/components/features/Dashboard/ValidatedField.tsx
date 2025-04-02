@@ -7,22 +7,21 @@ interface Props {
   type?: string;
   label?: string;
   rows?: number;
+  inputType?: string;
 }
-const ValidatedField = ({ name, placeholder, type, label, rows }: Props) => {
-  const [field, meta] = useField(name);
+const ValidatedField = (props: Props) => {
+  const [field, meta] = useField(props.name);
   return (
     <FormField error={meta.touched && !!meta.error}>
-      {label && <label>{label} </label>}
-      <Field
-        {...field}
-        name={name}
-        placeholder={placeholder}
-        type={type || "text"}
-        as={type ? type : ""}
-        rows={rows}
-      />
+      {props.label && <label>{props.label} </label>}
+      {props.inputType == "textarea" ? (
+        <textarea {...field} {...props} />
+      ) : (
+        <input {...field} {...props} />
+      )}
+
       <ErrorMessage
-        name={name}
+        name={props.name}
         render={(err) => <Label basic color="red" content={err} />}
       />
     </FormField>

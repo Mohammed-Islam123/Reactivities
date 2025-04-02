@@ -1,9 +1,12 @@
-using System.Reflection.PortableExecutable;
+
+using Domain;
 using Microsoft.AspNetCore.Identity;
 
-public class AppUser:IdentityUser
+public class AppUser : IdentityUser
 {
-    public string DisplayName { get; set; }
-    public string Bio { get; set; }
-    
+    public string DisplayName { get; set; } = null!;
+    public string Bio { get; set; } = null!;
+
+    public ICollection<Attendee> Attendees { get; set; } = [];
+
 }

@@ -13,31 +13,31 @@ namespace Application.Activities;
 public class Create
 {
 
-    public class CreateActivityCommand : IRequest<Result<Guid>>
+    public class CreateActivityCommand : IRequest<Result<GetActivityDto>>
     {
         public CreateActivityDto ActivityDto { get; set; } = null!;
     }
 
-    public class CreateActivityCommandHandler(UserManager<AppUser> userManager, ReactivitiesDbContex contex, IMapper mapper, IUserAccessor userAccessor) : IRequestHandler<CreateActivityCommand, Result<Guid>>
+    public class CreateActivityCommandHandler(UserManager<AppUser> userManager, ReactivitiesDbContex contex, IMapper mapper, IUserAccessor userAccessor) : IRequestHandler<CreateActivityCommand, Result<GetActivityDto>>
     {
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly ReactivitiesDbContex _contex = contex;
         private readonly IMapper _mapper = mapper;
         private readonly IUserAccessor _userAccessor = userAccessor;
 
-        public async Task<Result<Guid>> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
+        public async Task<Result<GetActivityDto>> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
         {
             var activity = _mapper.Map<Activity>(request.ActivityDto);
             var user = await _userManager.FindByNameAsync(_userAccessor.GetUserName());
 
             if (user is null)
-                return Result<Guid>.Failure("User Not Found", 404);
+                return Result<GetActivityDto>.Failure("User Not Found", 404);
             activity.Attendees.Add(new Attendee { Activity = activity, AppUser = user, IsHost = true });
             await _contex.Activities.AddAsync(activity);
             ;
             return await _contex.SaveChangesAsync(cancellationToken) > 0
-                ? Result<Guid>.Success(activity.Id)
-                : Result<Guid>.Failure("Error During Creating", 500);
+                ? Result<GetActivityDto>.Success(_mapper.Map<GetActivityDto>(activity))
+                : Result<GetActivityDto>.Failure("Error During Creating", 500);
         }
     }
 

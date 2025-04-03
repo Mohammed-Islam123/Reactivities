@@ -1,5 +1,5 @@
 import { FormField, Label } from "semantic-ui-react";
-import { ErrorMessage, Field, useField } from "formik";
+import { ErrorMessage, useField } from "formik";
 
 interface Props {
   name: string;
@@ -9,12 +9,12 @@ interface Props {
   rows?: number;
   inputType?: string;
 }
-const ValidatedField = (props: Props) => {
+const ValidatedField = ({ inputType, ...props }: Props) => {
   const [field, meta] = useField(props.name);
   return (
     <FormField error={meta.touched && !!meta.error}>
       {props.label && <label>{props.label} </label>}
-      {props.inputType == "textarea" ? (
+      {inputType == "textarea" ? (
         <textarea {...field} {...props} />
       ) : (
         <input {...field} {...props} />

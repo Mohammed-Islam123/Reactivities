@@ -61,5 +61,4 @@ catch (Exception e)
     var logger = service.GetRequiredService<ILogger<Program>>();
     logger.LogError(e, "A problem occured when Migrating database");
 }
-
 app.Run();

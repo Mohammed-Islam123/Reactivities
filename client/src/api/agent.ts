@@ -1,10 +1,10 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Activity } from "../types/activity.type";
-import { delay } from "../utils/helpers";
+import { Activity, ActivityFormValues } from "../types/activity.type";
 import { toast } from "react-toastify";
 import { router } from "../router/Router";
 import userLogin, { User } from "../types/user.type";
 import { store } from "../stores/Store";
+import { delay } from "../utils/helpers";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 axios.interceptors.request.use((conf) => {
@@ -23,7 +23,6 @@ axios.interceptors.response.use(
       case 400:
         if (data.errors) {
           throw data.errors;
-          // store.errorStore.setValidationErros(data.errors);
         } else {
           toast.error(data);
         }
@@ -58,11 +57,16 @@ const request = {
 
 const Activities = {
   getAll: () => request.get<Activity[]>("/activities"),
-  getOne: (id: string) => request.get<Activity>(`/activities/${id}`),
-  editActivity: (body: Activity) =>
+  getOne: (id: string) => {
+    console.log("Fetchin ..");
+    return request.get<Activity>(`/activities/${id}`);
+  },
+  editActivity: (body: ActivityFormValues) =>
     request.put<void>(`/activities/${body.id}`, body),
-  addActivity: (body: Activity) => request.post<Activity>("/activities/", body),
+  addActivity: (body: ActivityFormValues) =>
+    request.post<Activity>("/activities/", body),
   deleteActivity: (id: string) => request.delete<void>(`/activities/${id}`),
+  attendActivity: (id: string) => request.post(`activities/${id}/attend`, {}),
 };
 
 const Account = {

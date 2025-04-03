@@ -36,11 +36,11 @@ public class ActivitiesController : BaseController
 
     [HttpPost]
 
-    public async Task<ActionResult> CreateActivity(CreateActivityDto activityDto)
+    public async Task<ActionResult<GetActivityDto>> CreateActivity(CreateActivityDto activityDto)
     {
 
         var result = await Mediator.Send(new Create.CreateActivityCommand { ActivityDto = activityDto });
-        return !result.IsSuccess ? HandleResult(result) : CreatedAtRoute("GetActivity", new { id = result.Value }, new { id = result.Value, activityDto });
+        return HandleResult(result);
     }
 
     [Authorize("IsActivityHost")]
@@ -52,6 +52,7 @@ public class ActivitiesController : BaseController
         return result.IsSuccess ? NoContent() : HandleResult(result);
 
     }
+    [Authorize("IsActivityHost")]
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteActivity(Guid id)

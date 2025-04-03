@@ -15,12 +15,14 @@ const ActivityDetails = () => {
 
   const { id } = useParams<"id">();
   useEffect(() => {
-    if (id) activityStore.loadSingleActivity(id);
+    const loadCurrenActivity = async (id: string) => {
+      await activityStore.loadSingleActivity(id);
+    };
+
+    if (id) loadCurrenActivity(id);
   }, [activityStore, id]);
 
-  return activityStore.loading ? (
-    <Loading />
-  ) : (
+  return !activityStore.loading ? (
     <Grid>
       <Grid.Column width={10}>
         <ActivityDetailsHeader activity={activityStore.selectedItem} />
@@ -29,9 +31,13 @@ const ActivityDetails = () => {
       </Grid.Column>
 
       <Grid.Column width={6}>
-        <ActivityDetailsSideBar />
+        <ActivityDetailsSideBar
+          attendees={activityStore.selectedItem?.attendees}
+        />
       </Grid.Column>
     </Grid>
+  ) : (
+    <Loading />
   );
 };
 

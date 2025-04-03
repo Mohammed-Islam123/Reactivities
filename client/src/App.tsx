@@ -16,21 +16,28 @@ function App() {
   const [loading, setLoading] = useState(true);
   const { activityStore } = useStore();
   useEffect(() => {
-    if (
-      activityStore.activitiesMap.size === 0 &&
-      location.pathname !== "/" &&
-      token
-    )
-      activityStore.loadActivities();
-
-    if (token && !currentUser) {
-      loadCurrent().then(() => {
+    const load = async () => {
+      try {
+        if (token && !currentUser) {
+          await loadCurrent();
+        }
+        if (
+          activityStore.activitiesMap.size === 0 &&
+          location.pathname !== "/" &&
+          token
+        )
+          await activityStore.loadActivities();
+      } catch (error) {
+        console.log(error);
+      } finally {
         setLoading(false);
-      });
-    } else setLoading(false);
+      }
+    };
+    load();
   }, [activityStore, loadCurrent, token, currentUser, location]);
-  if (loading) return <Loading />;
-  return location.pathname === "/" ? (
+  return loading && activityStore.activitiesMap.size === 0 ? (
+    <Loading />
+  ) : location.pathname === "/" ? (
     <Home />
   ) : (
     <>

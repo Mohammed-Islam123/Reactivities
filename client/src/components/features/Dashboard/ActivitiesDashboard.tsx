@@ -14,7 +14,8 @@ const ActivitiesDashboard = () => {
       activityStore.loadActivities();
   }, [activityStore]);
 
-  return activityStore.loading ? (
+  return activityStore.loading &&
+    activityStore.groupedActivities.length === 0 ? (
     <Loading />
   ) : activityStore.groupedActivities.length === 0 ? (
     <h1>There is no Activitities</h1>

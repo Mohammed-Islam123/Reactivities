@@ -2,12 +2,13 @@ export default interface userLogin {
   email: string;
   password: string;
   displayName?: string;
-  username?: string;
+  userName?: string;
 }
 export interface User {
   email: string;
   image?: string;
   token?: string;
   displayName: string;
-  username: string;
+  userName: string;
+  bio?: string;
 }

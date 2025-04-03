@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { Activity } from "../../../types/activity.type";
+import { ActivityFormValues } from "../../../types/activity.type";
 import { Button, Segment } from "semantic-ui-react";
-import { v4 as uuid } from "uuid";
-import agent from "../../../api/agent";
 import { useStore } from "../../../stores/Store";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -15,10 +13,9 @@ import CustomDatePicker from "../../common/CustomDateInput";
 const ActivityForm = () => {
   const {
     activityStore: {
-      activitiesMap,
-      submitting,
+      createActivity,
       selectedItem,
-      setSubmitting,
+
       setSelectedItem,
       setEditedActivity,
       loadSingleActivity,
@@ -27,15 +24,8 @@ const ActivityForm = () => {
 
   const { id } = useParams();
 
-  const [currentActivityValue, setCurrentActivityValue] = useState<Activity>({
-    id: uuid(),
-    category: "",
-    city: "",
-    date: new Date(),
-    description: "",
-    title: "",
-    venue: "",
-  });
+  const [currentActivityValue, setCurrentActivityValue] =
+    useState<ActivityFormValues>(new ActivityFormValues());
 
   useEffect(() => {
     if (!id) return;
@@ -45,25 +35,8 @@ const ActivityForm = () => {
   }, [id, selectedItem, loadSingleActivity, setSelectedItem]);
   const navigate = useNavigate();
 
-  const handleFormSubmit = async (activity: Activity) => {
-    setSubmitting(true);
-    const exist = activitiesMap.has(activity.id);
-
-    try {
-      if (!exist) {
-        const created = await agent.Activities.addActivity(activity);
-
-        activity.id = created.id;
-        activitiesMap.set(created.id, created);
-      } else {
-        await agent.Activities.editActivity(activity);
-        activitiesMap.set(activity.id, activity);
-      }
-      setSelectedItem(activity);
-    } catch (error) {
-      console.error(error);
-    }
-    setSubmitting(false);
+  const handleFormSubmit = async (activity: ActivityFormValues) => {
+    await createActivity(activity);
     setEditedActivity(undefined);
     navigate(`/activities/${activity.id}`);
   };
@@ -111,7 +84,7 @@ const ActivityForm = () => {
             <ValidatedField placeholder="City" name="city" />
             <ValidatedField placeholder="Venue" name="venue" />
             <Button
-              loading={submitting}
+              loading={isSubmitting}
               positive
               type="submit"
               content="Submit"

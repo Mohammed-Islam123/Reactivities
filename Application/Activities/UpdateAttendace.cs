@@ -1,6 +1,8 @@
+using System.Data.Common;
 using Application.Core;
 using Application.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -24,17 +26,19 @@ public class UpdateAttendace
             var activity = await _dbContex.Activities.Include(act => act.Attendees).ThenInclude(at => at.AppUser).FirstOrDefaultAsync(act => act.Id == request.Guid);
             if (activity is null)
                 return Result<Unit>.Failure("Activity Not Found", 404);
-            var user = activity.Attendees.FirstOrDefault(att => att.AppUser.UserName == _userAccessor.GetUserName());
+            var user = activity.Attendees.FirstOrDefault(att => (att.AppUser.UserName == _userAccessor.GetUserName()));
             if (user is null)
             {
                 var appUser = await _dbContex.Users.FirstOrDefaultAsync(u => u.UserName == _userAccessor.GetUserName());
                 if (appUser is null)
-                    return Result<Unit>.Failure("Activity Not Found", 404);
+                    return Result<Unit>.Failure("User Not Found", 404);
                 activity.Attendees.Add(new Domain.Attendee { ActivityId = activity.Id, AppUserId = appUser.Id });
             }
             else if (user.IsHost)
             {
                 activity.IsCancelled = !activity.IsCancelled;
+                Console.WriteLine(activity.IsCancelled);
+
             }
             else
             {

@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import userLogin, { User } from "../types/user.type";
 import agent from "../api/agent";
 import { router } from "../router/Router";
+import { store } from "./Store";
 
 class UserStore {
   currentUser: User | null = null;
@@ -43,9 +44,13 @@ class UserStore {
     router.navigate("/");
   };
   loadCurrent = async () => {
+    store.activityStore.setLoadingState(true);
+
     const user = await agent.Account.currentUser();
-    console.log(user);
-    this.currentUser = user;
+    runInAction(() => {
+      this.currentUser = user;
+    });
+    store.activityStore.setLoadingState(false);
   };
 }
 export { UserStore };

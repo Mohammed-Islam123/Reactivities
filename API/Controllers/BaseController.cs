@@ -14,7 +14,7 @@ public class BaseController : ControllerBase
     {
         return result.IsSuccess switch
         {
-            false when result.Value == null => NotFound(),
+            false when result.Value == null => result.Code == 404 ? NotFound(result.Error) : BadRequest(result.Error),
             true when result.Value != null => Ok(result.Value),
             _ => BadRequest(result.Error)
         };

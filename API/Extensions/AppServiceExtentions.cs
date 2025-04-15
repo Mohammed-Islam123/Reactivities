@@ -9,6 +9,7 @@ using API.Services;
 using Application.Interfaces;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
+using Infrastructure.PhotoUpload;
 namespace API.Extensions;
 
 public static class AppServiceExtentions
@@ -42,6 +43,7 @@ public static class AppServiceExtentions
             });
         });
         collection.AddTransient<IAuthorizationHandler, IsRequestRequirmentHandler>();
+        collection.AddScoped<IPhotoUploadService, PhotoUploadService>();
         return collection;
     }
 }

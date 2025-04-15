@@ -1,5 +1,6 @@
 using API.Extensions;
 using API.Middleware;
+using Infrastructure.PhotoUpload;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -32,7 +33,7 @@ builder.Services.AddCors(options =>
 
                 });
         });
-
+builder.Services.Configure<CloudianarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 

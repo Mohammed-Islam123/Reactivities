@@ -1,9 +1,11 @@
 using System.Security.Claims;
 using API.DTOs;
 using API.Services;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -26,12 +28,13 @@ public class AccountController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult<UserDTO>> Login([FromBody] LoginDTO loginDTO)
     {
-        var user = await _userManager.FindByEmailAsync(loginDTO.Email);
+        var user = await _userManager.Users.Include(u => u.Photos).FirstOrDefaultAsync(u => u.Email == loginDTO.Email);
         if (user is null)
             return Unauthorized();
         var success = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
         if (!success)
             return Unauthorized();
+
         return CreateUserDTO(user);
     }
 
@@ -59,7 +62,7 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<UserDTO>> GetCurrentUser()
     {
-        var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email)!);
+        var user = await _userManager.Users.Include(u => u.Photos).FirstOrDefaultAsync(u => u.Email == User.FindFirstValue(ClaimTypes.Email));
         if (user is null)
             return Unauthorized();
         return Ok(CreateUserDTO(user));
@@ -70,7 +73,7 @@ public class AccountController : ControllerBase
         return new UserDTO
         {
             DisplayName = user.DisplayName,
-            Image = null!,
+            Image = user.Photos.FirstOrDefault(p => p.IsMain)?.Url!,
             UserName = user.UserName!,
             Token = _tokenService.CreateToken(user),
             Email = user.Email!

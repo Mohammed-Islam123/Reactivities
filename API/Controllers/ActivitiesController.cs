@@ -1,6 +1,5 @@
 ﻿using Application.Activities;
 using Application.DTOs;
-using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,6 +60,7 @@ public class ActivitiesController : BaseController
 
         return result.IsSuccess ? NoContent() : HandleResult(result);
     }
+
 
 
 }

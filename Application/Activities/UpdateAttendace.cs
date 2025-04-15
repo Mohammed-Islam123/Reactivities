@@ -1,8 +1,6 @@
-using System.Data.Common;
 using Application.Core;
 using Application.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 

@@ -13,6 +13,7 @@ public class ReactivitiesDbContex : IdentityDbContext<AppUser>
 
     public DbSet<Activity> Activities { get; set; }
     public DbSet<Attendee> Attendees { get; set; }
+    public DbSet<Photo> Photos { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -26,7 +27,6 @@ public class ReactivitiesDbContex : IdentityDbContext<AppUser>
         builder.Entity<Attendee>()
         .HasOne(x => x.Activity)
         .WithMany(a => a.Attendees);
-
 
     }
 }

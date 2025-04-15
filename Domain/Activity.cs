@@ -11,4 +11,5 @@ public class Activity
     public string Venue { get; set; } = null!;
     public bool IsCancelled { get; set; }
     public ICollection<Attendee> Attendees { get; set; } = [];
+
 }
